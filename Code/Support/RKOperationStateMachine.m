@@ -179,12 +179,11 @@ static NSString *const RKOperationLockName = @"org.restkit.operation.lock";
 
 - (void)setFinalizationBlock:(void (^)(void))block
 {
-    __weak __typeof(self)weakSelf = self;
     TKState *finishedState = [self.stateMachine stateNamed:RKOperationStateFinished];
     [finishedState setWillEnterStateBlock:^(TKState *state, TKTransition *transition) {
-        [weakSelf performBlockWithLock:^{
+        [self performBlockWithLock:^{
             // Must emit KVO as we are replacing the block configured in `initWithOperation:queue:`
-            [weakSelf.operation willChangeValueForKey:@"isFinished"];
+            [self.operation willChangeValueForKey:@"isFinished"];
             block();
         }];
     }];
